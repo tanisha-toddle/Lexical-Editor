@@ -47,8 +47,9 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         CodeHighlightNode,
         CodeNode,
       ],
+      editable: currentMode === "edit"
     }),
-    [name],
+    [name, currentMode],
   );
 
   return (
@@ -65,6 +66,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
               <ContentEditable
                 className="editor-input"
                 aria-placeholder={placeholder}
+                aria-readonly={currentMode !== "edit"}
                 placeholder={
                   <div className="editor-placeholder">{placeholder}</div>
                 }

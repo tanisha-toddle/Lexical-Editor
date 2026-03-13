@@ -1,6 +1,7 @@
 import React from "react";
 import type { EditorModes } from "../../RichTextEditor";
 import "./EditorModePlugin.css";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 type ModeSwitcherProps = {
   mode: EditorModes;
@@ -8,10 +9,20 @@ type ModeSwitcherProps = {
 };
 
 const EditorModePlugin: React.FC<ModeSwitcherProps> = ({ mode, setMode }) => {
-  
+  const [editor] = useLexicalComposerContext();
+
   const handleOnClick = (mode: EditorModes) => {
     setMode(mode);
+    if (mode === "edit") {
+      editor.setEditable(true);
+    } else {
+      editor.setEditable(false);
+    }
   };
+
+//   useEffect(() => {
+//     editor.setEditable(mode === "edit");
+//   }, [mode, editor]);
 
   return (
     <div className="mode-switcher">
