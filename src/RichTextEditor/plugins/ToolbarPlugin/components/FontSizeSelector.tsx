@@ -18,10 +18,13 @@ export default function FontSize({
   fontSize,
   editor,
   setFontSize,
+  isDisabled
+
 }: {
   fontSize: number;
   editor: LexicalEditor;
   setFontSize: React.Dispatch<React.SetStateAction<number>>;
+  isDisabled : boolean;
 }) {
 
   const updateFontSize = () => {
@@ -94,7 +97,7 @@ export default function FontSize({
         className="toolbar-item font-decrement"
         aria-label="Decrease font size"
         onClick={() => handleButtons("dec")}
-        disabled={fontSize <= MIN_ALLOWED_FONT_SIZE && fontSize !== -1}
+        disabled={(fontSize <= MIN_ALLOWED_FONT_SIZE && fontSize !== -1) || isDisabled}
       >
         <i className="format minus-icon" />
       </button>
@@ -110,6 +113,7 @@ export default function FontSize({
         onKeyDown={handleKeyDown}
         onBlur={() => updateFontSize()}
         name="font-size-selector"
+        disabled={isDisabled}
       />
 
       <button
@@ -117,7 +121,7 @@ export default function FontSize({
         className="toolbar-item font-increment"
         aria-label="Increase font size"
         onClick={() => handleButtons("inc")}
-        disabled={fontSize >= MAX_ALLOWED_FONT_SIZE}
+        disabled={(fontSize >= MAX_ALLOWED_FONT_SIZE) || isDisabled}
       >
         <i className="format add-icon" />
       </button>

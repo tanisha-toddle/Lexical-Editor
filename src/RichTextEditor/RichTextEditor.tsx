@@ -2,7 +2,7 @@ import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { ParagraphNode, TextNode } from "lexical";
 import { HeadingNode } from "@lexical/rich-text";
 import { CodeHighlightNode, CodeNode } from "@lexical/code";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
@@ -12,10 +12,12 @@ import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import ToolbarPlugin from "./plugins/ToolbarPlugin/ToolbarPlugin";
 import theme from "./theme";
 import CustomOnChangePlugin from "./plugins/CustomOnChangePlugin/CustomOnChangePlugin";
+import EditorModePlugin from "./plugins/EditorModePlugin/EditorModePlugin";
 
 function onError(error: Error) {
   console.log(error);
 }
+export type EditorModes = "read" | "view" | "edit";
 
 interface RichTextEditorProps {
   value: string;
@@ -30,6 +32,9 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   name,
   placeholder = "Enter some rich text...",
 }) => {
+
+  const [currentMode, setCurrentMode] = useState<EditorModes>("edit");
+
   const initialConfig = useMemo(
     () => ({
       namespace: name,
@@ -49,7 +54,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <div className="editor-container">
-        <ToolbarPlugin />
+        <EditorModePlugin mode={currentMode} setMode={setCurrentMode} />
+        {
+          !(currentMode === "read") && <ToolbarPlugin isDisabled={currentMode === "view"} />
+        }
 
         <div className="editor-inner">
           <RichTextPlugin
@@ -74,5 +82,3 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 };
 
 export default RichTextEditor;
-
-// every plugin has access to editor through lexical composer context

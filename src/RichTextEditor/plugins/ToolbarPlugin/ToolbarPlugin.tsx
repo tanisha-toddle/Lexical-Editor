@@ -30,11 +30,11 @@ import useKeyBindings from "./useKeyBindings";
 import FontSizeSelector from "./components/FontSizeSelector";
 import { DEFAULT_FONT_SIZE } from "./modules/ToolbarUtils";
 
-function Divider() {
+export function Divider() {
   return <div className="divider"></div>;
 }
 
-const ToolbarPlugin = () => {
+const ToolbarPlugin = ({ isDisabled } : { isDisabled : boolean }) => {
   const [editor] = useLexicalComposerContext();
 
   const handleOnClick = (id: RichTextOption) => {
@@ -156,7 +156,7 @@ const ToolbarPlugin = () => {
         if (value === "p") {
           $setBlocksType(selection, () => $createParagraphNode());
         } else {
-          $setBlocksType(selection, () => $createHeadingNode(value)); // reset fonts as well
+          $setBlocksType(selection, () => $createHeadingNode(value));
         }
         const newSelection = $getSelection();
 
@@ -175,7 +175,7 @@ const ToolbarPlugin = () => {
         aria-label="Undo"
         className="toolbar-item spaced"
         onClick={() => handleOnClick(RichTextOptions.Undo)}
-        disabled={disableMap[RichTextOptions.Undo]}
+        disabled={disableMap[RichTextOptions.Undo] || isDisabled}
       >
         <i className="format undo" />
       </button>
@@ -184,7 +184,7 @@ const ToolbarPlugin = () => {
         aria-label="Redo"
         className="toolbar-item"
         onClick={() => handleOnClick(RichTextOptions.Redo)}
-        disabled={disableMap[RichTextOptions.Redo]}
+        disabled={disableMap[RichTextOptions.Redo] || isDisabled}
       >
         <i className="format redo" />
       </button>
@@ -195,6 +195,7 @@ const ToolbarPlugin = () => {
         aria-label="Bold"
         className={`toolbar-item spaced ${selectionMap[RichTextOptions.Bold] ? "active" : ""}`}
         onClick={() => handleOnClick(RichTextOptions.Bold)}
+        disabled={isDisabled}
       >
         <i className="format bold" />
       </button>
@@ -203,6 +204,7 @@ const ToolbarPlugin = () => {
         aria-label="Italic"
         className={`toolbar-item spaced ${selectionMap[RichTextOptions.Italic] ? "active" : ""}`}
         onClick={() => handleOnClick(RichTextOptions.Italic)}
+        disabled={isDisabled}
       >
         <i className="format italic" />
       </button>
@@ -211,6 +213,7 @@ const ToolbarPlugin = () => {
         aria-label="Underline"
         className={`toolbar-item spaced ${selectionMap[RichTextOptions.Underline] ? "active" : ""}`}
         onClick={() => handleOnClick(RichTextOptions.Underline)}
+        disabled={isDisabled}
       >
         <i className="format underline" />
       </button>
@@ -219,6 +222,7 @@ const ToolbarPlugin = () => {
         aria-label="Strikethrough"
         className={`toolbar-item ${selectionMap[RichTextOptions.Strikethrough] ? "active" : ""}`}
         onClick={() => handleOnClick(RichTextOptions.Strikethrough)}
+        disabled={isDisabled}
       >
         <i className="format strikethrough" />
       </button>
@@ -229,6 +233,7 @@ const ToolbarPlugin = () => {
         aria-label="Superscript"
         className={`toolbar-item spaced ${selectionMap[RichTextOptions.Superscript] ? "active" : ""}`}
         onClick={() => handleOnClick(RichTextOptions.Superscript)}
+        disabled={isDisabled}
       >
         <i className="format superscript" />
       </button>
@@ -237,6 +242,7 @@ const ToolbarPlugin = () => {
         aria-label="Subscript"
         className={`toolbar-item spaced ${selectionMap[RichTextOptions.Subscript] ? "active" : ""}`}
         onClick={() => handleOnClick(RichTextOptions.Subscript)}
+        disabled={isDisabled}
       >
         <i className="format subscript" />
       </button>
@@ -245,6 +251,7 @@ const ToolbarPlugin = () => {
         aria-label="Highlight"
         className={`toolbar-item spaced ${selectionMap[RichTextOptions.Highlight] ? "active" : ""}`}
         onClick={() => handleOnClick(RichTextOptions.Highlight)}
+        disabled={isDisabled}
       >
         <i className="format highlight" />
       </button>
@@ -253,6 +260,7 @@ const ToolbarPlugin = () => {
         aria-label="Code"
         className={`toolbar-item ${selectionMap[RichTextOptions.Code] ? "active" : ""}`}
         onClick={() => handleOnClick(RichTextOptions.Code)}
+        disabled={isDisabled}
       >
         <i className="format code" />
       </button>
@@ -263,6 +271,7 @@ const ToolbarPlugin = () => {
         aria-label="Left Align"
         className="toolbar-item"
         onClick={() => handleOnClick(RichTextOptions.LeftAlign)}
+        disabled={isDisabled}
       >
         <i className="format left-align" />
       </button>
@@ -271,6 +280,7 @@ const ToolbarPlugin = () => {
         aria-label="Center Align"
         className="toolbar-item"
         onClick={() => handleOnClick(RichTextOptions.CenterAlign)}
+        disabled={isDisabled}
       >
         <i className="format center-align" />
       </button>
@@ -279,6 +289,7 @@ const ToolbarPlugin = () => {
         aria-label="Right Align"
         className="toolbar-item"
         onClick={() => handleOnClick(RichTextOptions.RightAlign)}
+        disabled={isDisabled}
       >
         <i className="format right-align" />
       </button>
@@ -287,6 +298,7 @@ const ToolbarPlugin = () => {
         aria-label="Justify Align"
         className="toolbar-item"
         onClick={() => handleOnClick(RichTextOptions.JustifyAlign)}
+        disabled={isDisabled}
       >
         <i className="format justify-align" />
       </button>
@@ -297,6 +309,7 @@ const ToolbarPlugin = () => {
         value={blockType}
         onChange={(e) => $updateHeading(e.target.value as HeadingTagType)}
         name="block-type-selector"
+        disabled={isDisabled}
       >
         <option value="p">Normal Text</option>
         <option value="h1">Heading 1</option>
@@ -310,6 +323,7 @@ const ToolbarPlugin = () => {
         fontSize={fontSize}
         editor={editor}
         setFontSize={setFontSize}
+        isDisabled={isDisabled}
       />
     </div>
   );

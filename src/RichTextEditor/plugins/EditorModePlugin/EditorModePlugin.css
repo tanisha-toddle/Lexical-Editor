@@ -1,0 +1,67 @@
+/* container */
+.mode-switcher {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 8px;
+  background: #f3f4f6;
+
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+/* buttons */
+.mode-switcher .toolbar-item {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+/* hover */
+.mode-switcher .toolbar-item:hover {
+  background: #e7e7e7;
+}
+
+/* active */
+.mode-switcher .toolbar-item.active {
+  background: rgba(22, 22, 22, 0.132);
+}
+
+/* icon */
+.mode-switcher i {
+  width: 18px;
+  height: 18px;
+
+  display: block;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  opacity: 0.7;
+}
+
+
+/* icons */
+i.edit-mode {
+  background-image: url("/icons/edit-mode.svg");
+}
+
+i.view-mode {
+  background-image: url("/icons/view-mode.svg");
+}
+
+i.read-mode {
+  background-image: url("/icons/read-mode.svg");
+}
