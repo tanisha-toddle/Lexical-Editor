@@ -1,9 +1,14 @@
+import type { LexicalEditor, NodeKey } from "lexical";
 import React, { useCallback } from "react";
-import "./MediaCardComponent.css";
 import type { UploadStatus } from "../../constants/types";
+import { DELETE_MEDIA_CARD_COMMAND } from "../../RichTextEditor/commands/MediaCardNodeCommands";
+import "./MediaCardComponent.css";
+import { getFileSize, getIconFromFileType } from "./utils/HelperFunctions";
 // import { getIconFromFileType } from "./utils/HelperFunctions";
 
 interface MediaCardComponentProps {
+  editor: LexicalEditor;
+  nodeKey: NodeKey;
   name: string;
   size: number;
   fileType: string;
@@ -12,6 +17,8 @@ interface MediaCardComponentProps {
 }
 
 const MediaCardComponent: React.FC<MediaCardComponentProps> = ({
+  editor,
+  nodeKey,
   name,
   size,
   fileType,
@@ -22,28 +29,40 @@ const MediaCardComponent: React.FC<MediaCardComponentProps> = ({
     if (url) window.open(url, "_blank");
   }, [url]);
 
+  const handleDelete = useCallback(() => {
+    editor.dispatchCommand(DELETE_MEDIA_CARD_COMMAND, nodeKey);
+  }, [editor, nodeKey]);
+
+  const handleRetry = useCallback(() => {
+    editor.dispatchCommand(DELETE_MEDIA_CARD_COMMAND, nodeKey);
+  }, [editor, nodeKey]);
+
   return (
     <div
       onDoubleClick={handleCardDoubleClick}
-      className={`media-card-container ${status === "error" ? "error-border" : ""}`}
+      className={`media-card-container ${status === "error" ? "error" : ""}`}
     >
       <div className="media-card-icon">
-        <i className={`format pdf-icon`} />
+        <i className={`format ${getIconFromFileType(fileType)}`} />
       </div>
 
       <div className="media-card-content">
         <div className="media-card-title" title={name}>
           {name}
         </div>
-        <div className="media-card-subtitle">{size} KB</div>
+        <div className="media-card-subtitle">{getFileSize(size)}</div>
       </div>
 
       <div className="media-card-actions">
-        {status === "error" && <i className="format error-icon" />}
+        {status === "error" && (
+          <i className="format retry-icon" onClick={handleRetry} />
+        )}
 
         {status === "uploading" && <span className="loader" />}
 
-        {status === "success" && <i className="format delete-icon" />}
+        {status !== "uploading" && (
+          <i className="format delete-icon" onClick={handleDelete} />
+        )}
       </div>
     </div>
   );

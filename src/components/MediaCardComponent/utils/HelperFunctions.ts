@@ -1,36 +1,47 @@
 export function getIconFromFileType(fileType: string): string {
   switch (fileType) {
     case "application/pdf":
-      return "bi bi-file-earmark-pdf";
+      return "pdf-icon";
 
     case "application/msword":
     case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-      return "bi bi-file-earmark-word";
+      return "word-icon";
 
     case "application/vnd.ms-excel":
     case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-      return "bi bi-file-earmark-excel";
+      return "excel-icon";
 
     case "application/zip":
     case "application/x-zip-compressed":
-      return "bi bi-file-earmark-zip";
+      return "zip-icon";
 
     case "text/plain":
-      return "bi bi-file-earmark-text";
+      return "text-icon";
 
     default:
       if (fileType.startsWith("image/")) {
-        return "bi bi-file-earmark-image";
+        return "image-icon";
       }
 
       if (fileType.startsWith("video/")) {
-        return "bi bi-file-earmark-play";
+        return "video-icon";
       }
 
       if (fileType.startsWith("audio/")) {
-        return "bi bi-file-earmark-music";
+        return "audio-icon";
       }
 
-      return "bi bi-file-earmark";
+      return "file-icon";
   }
+}
+
+export function getFileSize(size: number): string {
+  const sizeInMB = size / (1024 * 1024);
+
+  if (sizeInMB >= 1) {
+    return `${sizeInMB.toFixed(2)} MB`;
+  }
+
+  const sizeInKB = (sizeInMB * 1024).toFixed(2);
+  return `${sizeInKB} KB`;
 }
