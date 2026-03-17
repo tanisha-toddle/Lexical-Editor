@@ -1,4 +1,4 @@
-import { DecoratorNode, type NodeKey } from "lexical";
+import { DecoratorNode, type LexicalEditor, type NodeKey } from "lexical";
 import type { JSX } from "react";
 import MediaCardComponent from "../../components/MediaCardComponent/MediaCardComponent";
 import type { UploadStatus } from "../../constants/types";
@@ -50,10 +50,11 @@ export class MediaCardNode extends DecoratorNode<JSX.Element> {
     return false;
   }
 
-  decorate(): JSX.Element {
+  decorate(editor: LexicalEditor): JSX.Element {
     return (
       <MediaCardComponent
-        // nodeKey={this.getKey()}
+        editor={editor}
+        nodeKey={this.getKey()}
         name={this.__name}
         size={this.__size}
         fileType={this.__fileType}

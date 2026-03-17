@@ -13,6 +13,9 @@ import ToolbarPlugin from "./plugins/ToolbarPlugin/ToolbarPlugin";
 import theme from "./theme";
 import CustomOnChangePlugin from "./plugins/CustomOnChangePlugin/CustomOnChangePlugin";
 import EditorModePlugin from "./plugins/EditorModePlugin/EditorModePlugin";
+import { MediaCardNode } from "../nodes/MediaCardNode/MediaCardNode";
+import MediaUploadPlugin from "./plugins/MediaUploadPlugin/MediaUploadPlugin";
+import { uploadToServer } from "../utils/UploadToServer";
 
 function onError(error: Error) {
   console.log(error);
@@ -46,6 +49,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         HeadingNode,
         CodeHighlightNode,
         CodeNode,
+        MediaCardNode
       ],
       editable: currentMode === "edit"
     }),
@@ -76,6 +80,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           />
           <HistoryPlugin />
           <AutoFocusPlugin />
+          <MediaUploadPlugin  uploadMediaHandler={uploadToServer} deleteMediaHandler={async () => {}}/>
           <CustomOnChangePlugin value={value} onChange={onChange} />
         </div>
       </div>
