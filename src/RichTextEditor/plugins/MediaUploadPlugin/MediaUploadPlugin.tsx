@@ -17,6 +17,7 @@ import {
 import {
   DELETE_MEDIA_CARD_COMMAND,
   INSERT_MEDIA_CARD_COMMAND,
+  RETRY_MEDIA_UPLOAD_COMMAND,
 } from "../../commands/MediaCardNodeCommands";
 
 interface MediaUploadPluginProps {
@@ -32,7 +33,6 @@ const MediaUploadPlugin: React.FC<MediaUploadPluginProps> = ({
 
   useEffect(() => {
     return mergeRegister(
-
       // Insert Media Card Node to editor and upload file to DB
       editor.registerCommand(
         INSERT_MEDIA_CARD_COMMAND,
@@ -48,6 +48,7 @@ const MediaUploadPlugin: React.FC<MediaUploadPluginProps> = ({
                   file.name,
                   file.size,
                   file.type,
+                  file
                 );
 
                 selection.insertNodes([node]);
@@ -124,6 +125,39 @@ const MediaUploadPlugin: React.FC<MediaUploadPluginProps> = ({
               );
             }
           });
+
+          return true;
+        },
+        COMMAND_PRIORITY_EDITOR,
+      ),
+
+      editor.registerCommand(
+        RETRY_MEDIA_UPLOAD_COMMAND,
+        (nodeKey) => {
+          const node = $getNodeByKey(nodeKey);
+
+          if ($isMediaCardNode(node)) {
+
+            if (!node.__file) return false;
+
+            const file = node.__file;
+
+            editor.update(() => node.setStatus("uploading"));
+
+            // upload to db
+            uploadMediaHandler(file)
+              .then((url) => {
+                editor.update(() => {
+                  node.setUrl(url);
+                  node.setStatus("success");
+                });
+              })
+              .catch(() => {
+                editor.update(() => {
+                  node.setStatus("error");
+                });
+              });
+          }
 
           return true;
         },

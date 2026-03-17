@@ -10,6 +10,7 @@ export class MediaCardNode extends DecoratorNode<JSX.Element> {
   __fileType: string;
   __url?: string;
   __status: UploadStatus;
+  __file?: File;
 
   constructor(
     name: string,
@@ -18,6 +19,7 @@ export class MediaCardNode extends DecoratorNode<JSX.Element> {
     status: UploadStatus,
     url?: string,
     key?: NodeKey,
+    file?: File,
   ) {
     super(key);
     this.__name = name;
@@ -25,6 +27,7 @@ export class MediaCardNode extends DecoratorNode<JSX.Element> {
     this.__fileType = fileType;
     this.__status = status;
     this.__url = url;
+    this.__file = file;
   }
 
   static getType(): string {
@@ -39,6 +42,7 @@ export class MediaCardNode extends DecoratorNode<JSX.Element> {
       node.__status,
       node.__url,
       node.__key,
+      node.__file,
     );
   }
 
@@ -72,6 +76,10 @@ export class MediaCardNode extends DecoratorNode<JSX.Element> {
   setStatus(status: UploadStatus) {
     const writable = this.getWritable();
     writable.__status = status;
+  }
+
+  getFile() : File | undefined {
+    return this.__file;
   }
 
   exportJSON(): SerializedMediaCardNode {

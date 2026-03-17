@@ -1,7 +1,7 @@
 import type { LexicalEditor, NodeKey } from "lexical";
 import React, { useCallback } from "react";
 import type { UploadStatus } from "../../constants/types";
-import { DELETE_MEDIA_CARD_COMMAND } from "../../RichTextEditor/commands/MediaCardNodeCommands";
+import { DELETE_MEDIA_CARD_COMMAND, RETRY_MEDIA_UPLOAD_COMMAND } from "../../RichTextEditor/commands/MediaCardNodeCommands";
 import "./MediaCardComponent.css";
 import { getFileSize, getIconFromFileType } from "./utils/HelperFunctions";
 // import { getIconFromFileType } from "./utils/HelperFunctions";
@@ -34,7 +34,7 @@ const MediaCardComponent: React.FC<MediaCardComponentProps> = ({
   }, [editor, nodeKey]);
 
   const handleRetry = useCallback(() => {
-    editor.dispatchCommand(DELETE_MEDIA_CARD_COMMAND, nodeKey);
+    editor.dispatchCommand(RETRY_MEDIA_UPLOAD_COMMAND, nodeKey);
   }, [editor, nodeKey]);
 
   return (

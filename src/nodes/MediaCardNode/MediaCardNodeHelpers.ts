@@ -5,9 +5,10 @@ export function $createMediaCardNode(
   name: string,
   size: number,
   fileType: string,
+  file: File
 ): MediaCardNode {
   return $applyNodeReplacement(
-    new MediaCardNode(name, size, fileType, "uploading", ""),
+    new MediaCardNode(name, size, fileType, "uploading", "", undefined, file),
   );
 }
 
