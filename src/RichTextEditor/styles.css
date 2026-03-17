@@ -510,6 +510,9 @@ i.superscript {
   background-image: url(icons/superscript.svg);
 }
 
+i.upload {
+  background-image: url(icons/upload.svg);
+}
 /* Save Button Styles */
 
 .save-button {

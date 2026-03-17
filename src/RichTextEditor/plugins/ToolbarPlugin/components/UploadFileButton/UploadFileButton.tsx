@@ -31,7 +31,7 @@ const UploadFileButton = ({
         disabled={isDisabled}
         onClick={handleOnClick}
       >
-        <i className="format code" />
+        <i className="format upload" />
       </button>
       <input
         ref={inputRef}
@@ -50,5 +50,3 @@ const UploadFileButton = ({
 };
 
 export default UploadFileButton;
-
-// add upload icon

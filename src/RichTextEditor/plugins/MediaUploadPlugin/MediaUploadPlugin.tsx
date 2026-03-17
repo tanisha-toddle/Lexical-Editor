@@ -80,7 +80,7 @@ const MediaUploadPlugin: React.FC<MediaUploadPluginProps> = ({
         PASTE_COMMAND,
 
         (event: ClipboardEvent) => {
-          console.log(event);
+
           const files = Array.from(event.clipboardData?.files ?? []);
 
           if (files.length === 0) return false;
