@@ -3,22 +3,25 @@ import {
   $getNodeByKey,
   $getSelection,
   $isRangeSelection,
+  $nodesOfType,
   COMMAND_PRIORITY_EDITOR,
   COMMAND_PRIORITY_LOW,
   DROP_COMMAND,
   mergeRegister,
   PASTE_COMMAND,
 } from "lexical";
-import { useEffect } from "react";
-import {
-  $createMediaCardNode,
-  $isMediaCardNode,
-} from "../../../nodes/MediaCardNode/MediaCardNodeHelpers";
+import React, { useCallback, useEffect, useRef } from "react";
 import {
   DELETE_MEDIA_CARD_COMMAND,
   INSERT_MEDIA_CARD_COMMAND,
   RETRY_MEDIA_UPLOAD_COMMAND,
 } from "../../commands/MediaCardNodeCommands";
+import type { UploadStatus } from "../../../constants/types";
+import {
+  $createMediaCardNode,
+  $isMediaCardNode,
+} from "../../../nodes/MediaCardNode/MediaCardNodeHelpers";
+import { MediaCardNode } from "../../../nodes/MediaCardNode/MediaCardNode";
 
 interface MediaUploadPluginProps {
   uploadMediaHandler: (file: File) => Promise<string>;
@@ -31,43 +34,99 @@ const MediaUploadPlugin: React.FC<MediaUploadPluginProps> = ({
 }) => {
   const [editor] = useLexicalComposerContext();
 
+  // Temporary Storage : External prop as well
+  const uploadResultsCache = useRef(
+    new Map<
+      string,
+      {
+        status: UploadStatus;
+        file?: File;
+        url?: string;
+      }
+    >(),
+  );
+
+  const updateAllInstances = useCallback(
+    (uploadId: string, status: UploadStatus, url?: string) => {
+      editor.update(
+        () => {
+          const allNodes = $nodesOfType(MediaCardNode);
+
+          allNodes.forEach((node) => {
+            if (node.getUploadId() === uploadId) {
+              node.setStatus(status);
+              if (url) node.setUrl(url);
+            }
+          });
+        },
+        {
+          tag: "history-merge",
+        },
+      );
+    },
+    [editor],
+  );
+
   useEffect(() => {
-    return mergeRegister(
-      // Insert Media Card Node to editor and upload file to DB
+    mergeRegister(
+      // 1 : INSERT MEDIA CARD NODE
       editor.registerCommand(
         INSERT_MEDIA_CARD_COMMAND,
-
-        (files: File[]) => {
+        (files: [File]) => {
+          // Add file cards to editor
           editor.update(() => {
             const selection = $getSelection();
+            if (!$isRangeSelection(selection)) return;
 
-            if ($isRangeSelection(selection)) {
-              files.forEach((file) => {
-                // insert node
-                const node = $createMediaCardNode(
-                  file.name,
-                  file.size,
-                  file.type,
-                  file
-                );
+            files.forEach((file) => {
+              // Generate a unique Id to store response and file in temp cache
+              const uploadId = crypto.randomUUID();
 
-                selection.insertNodes([node]);
-
-                // upload to db
-                uploadMediaHandler(file)
-                  .then((url) => {
-                    editor.update(() => {
-                      node.setUrl(url);
-                      node.setStatus("success");
-                    });
-                  })
-                  .catch(() => {
-                    editor.update(() => {
-                      node.setStatus("error");
-                    });
-                  });
+              // Save file object to cache that can be accessed via upload id
+              uploadResultsCache.current.set(uploadId, {
+                status: "uploading",
+                file: file,
               });
-            }
+
+              // TD : pass status as well from here and remove file
+              const node = $createMediaCardNode(
+                file.name,
+                file.size,
+                file.type,
+                "uploading",
+                uploadId,
+                ""
+              );
+
+              selection.insertNodes([node]);
+
+              // upload file to DB
+              uploadMediaHandler(file)
+                .then((url) => {
+                  // as you recieve the url update the cache
+                  const entry = uploadResultsCache.current.get(uploadId);
+
+                  uploadResultsCache.current.set(uploadId, {
+                    ...entry,
+                    status: "success",
+                    url,
+                  });
+
+                  // update all other nodes with same uploadId
+                  updateAllInstances(uploadId, "success", url);
+                })
+                .catch(() => {
+                  const entry = uploadResultsCache.current.get(uploadId);
+
+                  uploadResultsCache.current.set(uploadId, {
+                    ...entry,
+                    status: "error",
+                  });
+
+                  // update all other nodes with same uploadId
+                  updateAllInstances(uploadId, "error");
+                });
+            });
           });
 
           return true;
@@ -75,12 +134,11 @@ const MediaUploadPlugin: React.FC<MediaUploadPluginProps> = ({
         COMMAND_PRIORITY_EDITOR,
       ),
 
-      // Copy Paste Detection
+      // 2. PASTE COMMAND
       editor.registerCommand(
         PASTE_COMMAND,
 
         (event: ClipboardEvent) => {
-
           const files = Array.from(event.clipboardData?.files ?? []);
 
           if (files.length === 0) return false;
@@ -92,9 +150,10 @@ const MediaUploadPlugin: React.FC<MediaUploadPluginProps> = ({
         COMMAND_PRIORITY_LOW,
       ),
 
-      // Drag and Drop Files
+      // 3. DROP COMMAND
       editor.registerCommand(
         DROP_COMMAND,
+
         (event: DragEvent) => {
           const files = Array.from(event.dataTransfer?.files || []);
 
@@ -107,64 +166,118 @@ const MediaUploadPlugin: React.FC<MediaUploadPluginProps> = ({
         COMMAND_PRIORITY_LOW,
       ),
 
-      // Delete media from editor and db
+      // 4 : DELETE COMMAND
       editor.registerCommand(
         DELETE_MEDIA_CARD_COMMAND,
-
         (nodeKey: string) => {
           editor.update(() => {
             const node = $getNodeByKey(nodeKey);
-
             if (!node) return;
 
+            const urlToDelete = $isMediaCardNode(node) ? node.getUrl() : null;
             node.remove();
 
-            if ($isMediaCardNode(node) && node.__url) {
-              deleteMediaHandler(node.__url).catch(() =>
-                console.log("Deletion failed"),
+            // Delete Url from DB if no node uses that url
+            if (urlToDelete) {
+              const remainingNodes = $nodesOfType(MediaCardNode);
+              const urlIsUsed = remainingNodes.some(
+                (n) => n.getUrl() === urlToDelete,
               );
+
+              if (!urlIsUsed) {
+                deleteMediaHandler(urlToDelete).catch(() =>
+                  console.log("Cloud Deletion Failed !"),
+                );
+              }
             }
           });
-
           return true;
         },
         COMMAND_PRIORITY_EDITOR,
       ),
 
+      // 5 : RETRY MEDIA UPLOAD COMMAND
       editor.registerCommand(
         RETRY_MEDIA_UPLOAD_COMMAND,
-        (nodeKey) => {
+        (nodeKey: string) => {
           const node = $getNodeByKey(nodeKey);
 
-          if ($isMediaCardNode(node)) {
+          if (!node || !$isMediaCardNode(node)) return false;
+         
 
-            if (!node.__file) return false;
+          const uploadId = node.getUploadId();
+          const cachedData = uploadResultsCache.current.get(uploadId);
+          const file = cachedData?.file;
 
-            const file = node.__file;
+          if (!file) return false;
 
-            editor.update(() => node.setStatus("uploading"));
+          updateAllInstances(uploadId, "uploading");
 
-            // upload to db
-            uploadMediaHandler(file)
-              .then((url) => {
-                editor.update(() => {
-                  node.setUrl(url);
-                  node.setStatus("success");
-                });
-              })
-              .catch(() => {
-                editor.update(() => {
-                  node.setStatus("error");
-                });
+          uploadMediaHandler(file)
+            .then((url) => {
+              uploadResultsCache.current.set(uploadId, {
+                ...cachedData,
+                status: "success",
+                url,
               });
-          }
+
+              // update all other nodes with same uploadId
+              updateAllInstances(uploadId, "success", url);
+            })
+            .catch(() => {
+              uploadResultsCache.current.set(uploadId, {
+                ...cachedData,
+                status: "error",
+              });
+
+              // update all other nodes with same uploadId
+              updateAllInstances(uploadId, "error");
+            });
 
           return true;
         },
         COMMAND_PRIORITY_EDITOR,
       ),
+
+      // 6 : MUTATION LISTENER
+      editor.registerMutationListener(
+        MediaCardNode,
+        (nodeMutations, { updateTags }) => {
+          if (updateTags.has("historic") || updateTags.has("paste")) {
+            editor.update(
+              () => {
+                for (const [nodeKey, mutation] of nodeMutations) {
+                  if (mutation === "created" || mutation === "updated") {
+                    const node = $getNodeByKey(nodeKey);
+
+                    if ($isMediaCardNode(node)) {
+                      const uploadId = node.getUploadId();
+                      const cachedData =
+                        uploadResultsCache.current.get(uploadId);
+
+                      if (
+                        cachedData &&
+                        node.getStatus() !== cachedData.status
+                      ) {
+                        node.setStatus(cachedData.status);
+
+                        if (cachedData.url) {
+                          node.setUrl(cachedData.url);
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                tag: "history-merge",
+              },
+            );
+          }
+        },
+      ),
     );
-  }, [editor, uploadMediaHandler, deleteMediaHandler]);
+  }, [editor, updateAllInstances, uploadMediaHandler, deleteMediaHandler]);
 
   return null;
 };

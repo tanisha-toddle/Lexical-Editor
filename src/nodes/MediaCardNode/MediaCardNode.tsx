@@ -10,16 +10,16 @@ export class MediaCardNode extends DecoratorNode<JSX.Element> {
   __fileType: string;
   __url?: string;
   __status: UploadStatus;
-  __file?: File;
+  __uploadId: string;
 
   constructor(
     name: string,
     size: number,
     fileType: string,
     status: UploadStatus,
+    uploadId: string,
     url?: string,
     key?: NodeKey,
-    file?: File,
   ) {
     super(key);
     this.__name = name;
@@ -27,7 +27,7 @@ export class MediaCardNode extends DecoratorNode<JSX.Element> {
     this.__fileType = fileType;
     this.__status = status;
     this.__url = url;
-    this.__file = file;
+    this.__uploadId = uploadId;
   }
 
   static getType(): string {
@@ -40,9 +40,9 @@ export class MediaCardNode extends DecoratorNode<JSX.Element> {
       node.__size,
       node.__fileType,
       node.__status,
+      node.__uploadId,
       node.__url,
       node.__key,
-      node.__file,
     );
   }
 
@@ -68,9 +68,19 @@ export class MediaCardNode extends DecoratorNode<JSX.Element> {
     );
   }
 
+  getUrl(): string | undefined {
+    const latest = this.getLatest();
+    return latest.__url;
+  }
+
   setUrl(url: string) {
     const writable = this.getWritable();
     writable.__url = url;
+  }
+
+  getStatus(): UploadStatus {
+    const latest = this.getLatest();
+    return latest.__status;
   }
 
   setStatus(status: UploadStatus) {
@@ -78,8 +88,8 @@ export class MediaCardNode extends DecoratorNode<JSX.Element> {
     writable.__status = status;
   }
 
-  getFile() : File | undefined {
-    return this.__file;
+  getUploadId(): string {
+    return this.getLatest().__uploadId;
   }
 
   exportJSON(): SerializedMediaCardNode {
@@ -91,6 +101,7 @@ export class MediaCardNode extends DecoratorNode<JSX.Element> {
       fileType: this.__fileType,
       url: this.__url,
       status: this.__status,
+      uploadId: this.__uploadId,
     };
   }
 
@@ -100,6 +111,7 @@ export class MediaCardNode extends DecoratorNode<JSX.Element> {
       _serializedNode.size,
       _serializedNode.fileType,
       _serializedNode.status,
+      _serializedNode.uploadId || crypto.randomUUID(),
       _serializedNode.url,
     );
   }

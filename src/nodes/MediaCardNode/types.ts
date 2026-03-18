@@ -9,4 +9,5 @@ export type SerializedMediaCardNode = {
   fileType: string;
   url?: string;
   status: UploadStatus;
+  uploadId: string;
 } & SerializedLexicalNode;
