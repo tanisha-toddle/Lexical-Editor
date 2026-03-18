@@ -1,4 +1,4 @@
-import type { LexicalEditor, NodeKey } from "lexical";
+import type { NodeKey } from "lexical";
 import React, { useCallback, useContext } from "react";
 import type { UploadStatus } from "../../constants/types";
 import {
@@ -8,10 +8,10 @@ import {
 import "./MediaCardComponent.css";
 import { getFileSize, getIconFromFileType } from "./utils/HelperFunctions";
 import { EditorContext } from "../../RichTextEditor/context/EditorContext";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 // import { getIconFromFileType } from "./utils/HelperFunctions";
 
 interface MediaCardComponentProps {
-  editor: LexicalEditor;
   nodeKey: NodeKey;
   name: string;
   size: number;
@@ -21,7 +21,6 @@ interface MediaCardComponentProps {
 }
 
 const MediaCardComponent: React.FC<MediaCardComponentProps> = ({
-  editor,
   nodeKey,
   name,
   size,
@@ -29,6 +28,8 @@ const MediaCardComponent: React.FC<MediaCardComponentProps> = ({
   status,
   url,
 }) => {
+  
+  const [editor] = useLexicalComposerContext();
   const mode = useContext(EditorContext);
 
   const handleCardDoubleClick = useCallback(() => {
