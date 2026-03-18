@@ -25,6 +25,7 @@ const CustomOnChangePlugin = ({ value, onChange }: CustomOnChangePlugin) => {
   return (
     <OnChangePlugin
       ignoreSelectionChange
+      ignoreHistoryMergeTagChange={false} 
       onChange={(editorState) => {
         const json = JSON.stringify(editorState.toJSON());
         onChange(json);
