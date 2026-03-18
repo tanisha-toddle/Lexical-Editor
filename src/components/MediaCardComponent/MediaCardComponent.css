@@ -146,3 +146,13 @@ i.video-icon {
 i.file-icon {
   background: url(icons/fileTypeIcons/file.svg);
 }
+
+.media-card-retry-button, .media-card-delete-button {
+  all: unset;
+}
+
+.media-card-retry-button:disabled, .media-card-delete-button:disabled {
+  opacity: 0.5;
+}
+
+

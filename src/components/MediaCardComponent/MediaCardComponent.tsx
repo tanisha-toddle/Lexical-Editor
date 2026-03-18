@@ -1,9 +1,13 @@
 import type { LexicalEditor, NodeKey } from "lexical";
-import React, { useCallback } from "react";
+import React, { useCallback, useContext } from "react";
 import type { UploadStatus } from "../../constants/types";
-import { DELETE_MEDIA_CARD_COMMAND, RETRY_MEDIA_UPLOAD_COMMAND } from "../../RichTextEditor/commands/MediaCardNodeCommands";
+import {
+  DELETE_MEDIA_CARD_COMMAND,
+  RETRY_MEDIA_UPLOAD_COMMAND,
+} from "../../RichTextEditor/commands/MediaCardNodeCommands";
 import "./MediaCardComponent.css";
 import { getFileSize, getIconFromFileType } from "./utils/HelperFunctions";
+import { EditorContext } from "../../RichTextEditor/context/EditorContext";
 // import { getIconFromFileType } from "./utils/HelperFunctions";
 
 interface MediaCardComponentProps {
@@ -25,6 +29,8 @@ const MediaCardComponent: React.FC<MediaCardComponentProps> = ({
   status,
   url,
 }) => {
+  const mode = useContext(EditorContext);
+
   const handleCardDoubleClick = useCallback(() => {
     if (url) window.open(url, "_blank");
   }, [url]);
@@ -53,17 +59,33 @@ const MediaCardComponent: React.FC<MediaCardComponentProps> = ({
         <div className="media-card-subtitle">{getFileSize(size)}</div>
       </div>
 
-      <div className="media-card-actions">
-        {status === "error" && (
-          <i className="format retry-icon" onClick={handleRetry} />
-        )}
+      {mode !== "read" && (
+        <div className="media-card-actions">
+          {status === "error" && (
+            <button
+              disabled={mode === "view"}
+              onClick={handleRetry}
+              aria-label="retry-upload"
+              className="media-card-retry-button"
+            >
+              <i className="format retry-icon" />
+            </button>
+          )}
 
-        {status === "uploading" && <span className="loader" />}
+          {status === "uploading" && <span className="loader" />}
 
-        {status !== "uploading" && (
-          <i className="format delete-icon" onClick={handleDelete} />
-        )}
-      </div>
+          {status !== "uploading" && (
+            <button
+              disabled={mode === "view"}
+              onClick={handleDelete}
+              aria-label="delete-media"
+              className="media-card-delete-button"
+            >
+              <i className="format delete-icon" />
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 };
