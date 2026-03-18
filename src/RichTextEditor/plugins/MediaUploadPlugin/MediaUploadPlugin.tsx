@@ -72,7 +72,7 @@ const MediaUploadPlugin: React.FC<MediaUploadPluginProps> = ({
       // 1 : INSERT MEDIA CARD NODE
       editor.registerCommand(
         INSERT_MEDIA_CARD_COMMAND,
-        (files: [File]) => {
+        (files: File[]) => {
           // Add file cards to editor
           editor.update(() => {
             const selection = $getSelection();
@@ -95,7 +95,7 @@ const MediaUploadPlugin: React.FC<MediaUploadPluginProps> = ({
                 file.type,
                 "uploading",
                 uploadId,
-                ""
+                "",
               );
 
               selection.insertNodes([node]);
@@ -200,12 +200,17 @@ const MediaUploadPlugin: React.FC<MediaUploadPluginProps> = ({
       editor.registerCommand(
         RETRY_MEDIA_UPLOAD_COMMAND,
         (nodeKey: string) => {
-          const node = $getNodeByKey(nodeKey);
+          let uploadId: string = "";
 
-          if (!node || !$isMediaCardNode(node)) return false;
-         
+          editor.read(() => {
+            const node = $getNodeByKey(nodeKey);
+            if (node && $isMediaCardNode(node)) {
+              uploadId = node.getUploadId();
+            }
+          });
 
-          const uploadId = node.getUploadId();
+          if (!uploadId) return false;
+
           const cachedData = uploadResultsCache.current.get(uploadId);
           const file = cachedData?.file;
 
