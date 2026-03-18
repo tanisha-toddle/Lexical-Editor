@@ -19,6 +19,7 @@ const CustomOnChangePlugin = ({ value, onChange }: CustomOnChangePlugin) => {
     const parsed = editor.parseEditorState(value);
     queueMicrotask(() => {
       editor.setEditorState(parsed);
+      editor.focus();
     });
   }, [value, editor]);
 
