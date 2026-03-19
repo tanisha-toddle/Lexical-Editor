@@ -17,6 +17,7 @@ import { MediaCardNode } from "../nodes/MediaCardNode/MediaCardNode";
 import MediaUploadPlugin from "./plugins/MediaUploadPlugin/MediaUploadPlugin";
 import { uploadToServer } from "../utils/UploadToServer";
 import { EditorContext } from "./context/EditorContext";
+import SlashPlugin from "./plugins/SlashPlugin/SlashPlugin";
 
 function onError(error: Error) {
   console.log(error);
@@ -86,6 +87,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
               deleteMediaHandler={async () => {}}
             />
             <CustomOnChangePlugin value={value} onChange={onChange} />
+            <SlashPlugin />
           </div>
         </div>
       </LexicalComposer>
