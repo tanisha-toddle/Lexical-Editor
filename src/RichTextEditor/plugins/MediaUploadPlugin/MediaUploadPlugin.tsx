@@ -259,6 +259,11 @@ const MediaUploadPlugin: React.FC<MediaUploadPluginProps> = ({
                       const uploadId = node.getUploadId();
                       const cachedData =
                         uploadResultsCache.current.get(uploadId);
+                      
+                      // cache is cleared on reload and if file does not exists show error state 
+                      if (!cachedData && node.getStatus() === "uploading") {
+                        node.setStatus("error");
+                      }
 
                       if (
                         cachedData &&
