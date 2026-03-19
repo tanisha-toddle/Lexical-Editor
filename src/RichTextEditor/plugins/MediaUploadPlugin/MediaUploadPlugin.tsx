@@ -98,7 +98,10 @@ const MediaUploadPlugin: React.FC<MediaUploadPluginProps> = ({
                 "",
               );
 
-              selection.insertNodes([node]);
+              // Insert after parent node
+              const anchorNode = selection.anchor.getNode();
+              const parentNode = anchorNode.getTopLevelElementOrThrow();
+              parentNode.insertAfter(node);
 
               // upload file to DB
               uploadMediaHandler(file)
