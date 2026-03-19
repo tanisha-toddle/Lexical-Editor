@@ -6,19 +6,22 @@ import {
 import { SlashMenuOption } from "./SlashMenuOption";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useCallback, useMemo, useState } from "react";
-import { $updateHeading } from "../../../utils/updateBlockType";
 import type { TextNode } from "lexical";
-import { SLASH_MENU_ITEMS } from "../../../constants/slashMenuItems";
 import { createPortal } from "react-dom";
 import MenuItem from "../../../components/MenuItem/MenuItem";
-import './SlashPlugin.css'
+import "./SlashPlugin.css";
+import type { SlashMenuItem } from "./types";
 
-const SlashMenuPlugin = () => {
+interface SlashMenuProps {
+  menuItems: SlashMenuItem[];
+}
+
+const SlashMenuPlugin: React.FC<SlashMenuProps> = ({ menuItems }) => {
   const [editor] = useLexicalComposerContext();
   const [queryString, setQueryString] = useState<string | null>(null);
 
   // Called when an option is selected ( click or enter )
-  // Item can contain the function to run inside editor.update
+  // Can place it outside editor.update based on use case 
   const onSelectOption = useCallback(
     (
       selectedOption: SlashMenuOption,
@@ -27,7 +30,7 @@ const SlashMenuPlugin = () => {
     ) => {
       editor.update(() => {
         nodeToRemove?.remove();
-        $updateHeading(selectedOption.item.type);
+        selectedOption.item.onSelect(editor, selectedOption);
       });
       closeMenu();
     },
@@ -38,12 +41,14 @@ const SlashMenuPlugin = () => {
   const options = useMemo<SlashMenuOption[]>(() => {
     const query = queryString?.toLowerCase()?.trim() || "";
 
-    return SLASH_MENU_ITEMS.filter(
-      (item) =>
-        item.label.toLowerCase().includes(query) ||
-        item.type.toLowerCase().includes(query),
-    ).map((item) => new SlashMenuOption(item));
-  }, [queryString]);
+    return menuItems
+      .filter(
+        (item) =>
+          item.label.toLowerCase().includes(query) ||
+          item.type.toLowerCase().includes(query),
+      )
+      .map((item) => new SlashMenuOption(item));
+  }, [queryString, menuItems]);
 
   // Trigger function : slash triggers the plugin
   const triggerFn: TriggerFn = useCallback((text: string) => {

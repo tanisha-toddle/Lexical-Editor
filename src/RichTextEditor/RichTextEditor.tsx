@@ -18,6 +18,7 @@ import MediaUploadPlugin from "./plugins/MediaUploadPlugin/MediaUploadPlugin";
 import { uploadToServer } from "../utils/UploadToServer";
 import { EditorContext } from "./context/EditorContext";
 import SlashPlugin from "./plugins/SlashPlugin/SlashPlugin";
+import { SLASH_MENU_ITEMS } from "../constants/slashMenuItems";
 
 function onError(error: Error) {
   console.log(error);
@@ -87,7 +88,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
               deleteMediaHandler={async () => {}}
             />
             <CustomOnChangePlugin value={value} onChange={onChange} />
-            <SlashPlugin />
+            <SlashPlugin menuItems={SLASH_MENU_ITEMS}/>
           </div>
         </div>
       </LexicalComposer>
