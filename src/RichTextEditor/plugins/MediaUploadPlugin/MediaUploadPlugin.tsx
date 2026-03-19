@@ -1,5 +1,6 @@
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {
+  $createParagraphNode,
   $getNodeByKey,
   $getSelection,
   $isRangeSelection,
@@ -102,6 +103,14 @@ const MediaUploadPlugin: React.FC<MediaUploadPluginProps> = ({
               const anchorNode = selection.anchor.getNode();
               const parentNode = anchorNode.getTopLevelElementOrThrow();
               parentNode.insertAfter(node);
+
+              // Insert a new para after the node if no sibling exits 
+              const nextSibling = node.getNextSibling();
+              if(!nextSibling){
+                const newPara = $createParagraphNode();
+                node.insertAfter(newPara);
+                newPara.select();
+              }
 
               // upload file to DB
               uploadMediaHandler(file)
