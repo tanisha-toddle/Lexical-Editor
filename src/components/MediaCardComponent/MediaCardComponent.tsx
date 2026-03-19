@@ -60,11 +60,10 @@ const MediaCardComponent: React.FC<MediaCardComponentProps> = ({
         <div className="media-card-subtitle">{getFileSize(size)}</div>
       </div>
 
-      {mode !== "read" && (
+      {mode === "edit" && (
         <div className="media-card-actions">
           {status === "error" && (
             <button
-              disabled={mode === "view"}
               onClick={handleRetry}
               aria-label="retry-upload"
               className="media-card-retry-button"
@@ -77,7 +76,6 @@ const MediaCardComponent: React.FC<MediaCardComponentProps> = ({
 
           {status !== "uploading" && (
             <button
-              disabled={mode === "view"}
               onClick={handleDelete}
               aria-label="delete-media"
               className="media-card-delete-button"
