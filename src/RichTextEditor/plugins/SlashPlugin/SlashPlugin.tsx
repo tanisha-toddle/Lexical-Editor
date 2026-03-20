@@ -21,7 +21,7 @@ const SlashMenuPlugin: React.FC<SlashMenuProps> = ({ menuItems }) => {
   const [queryString, setQueryString] = useState<string | null>(null);
 
   // Called when an option is selected ( click or enter )
-  // Can place it outside editor.update based on use case 
+  // Can place it outside editor.update
   const onSelectOption = useCallback(
     (
       selectedOption: SlashMenuOption,
