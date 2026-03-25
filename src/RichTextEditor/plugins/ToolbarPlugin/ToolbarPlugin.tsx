@@ -29,12 +29,13 @@ import {
 import useKeyBindings from "./useKeyBindings";
 import FontSizeSelector from "./components/FontSizeSelector";
 import { DEFAULT_FONT_SIZE } from "./modules/ToolbarUtils";
+import UploadFileButton from "./components/UploadFileButton/UploadFileButton";
 
 export function Divider() {
   return <div className="divider"></div>;
 }
 
-const ToolbarPlugin = ({ isDisabled } : { isDisabled : boolean }) => {
+const ToolbarPlugin = ({ isDisabled }: { isDisabled: boolean }) => {
   const [editor] = useLexicalComposerContext();
 
   const handleOnClick = (id: RichTextOption) => {
@@ -325,6 +326,10 @@ const ToolbarPlugin = ({ isDisabled } : { isDisabled : boolean }) => {
         setFontSize={setFontSize}
         isDisabled={isDisabled}
       />
+
+      <Divider />
+
+      <UploadFileButton editor={editor} isDisabled={isDisabled} />
     </div>
   );
 };

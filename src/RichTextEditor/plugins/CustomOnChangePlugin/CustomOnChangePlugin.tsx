@@ -17,15 +17,18 @@ const CustomOnChangePlugin = ({ value, onChange }: CustomOnChangePlugin) => {
 
     if (!value) return;
     const parsed = editor.parseEditorState(value);
-    editor.setEditorState(parsed);
-
+    queueMicrotask(() => {
+      editor.setEditorState(parsed);
+      editor.focus();
+    });
   }, [value, editor]);
 
   return (
     <OnChangePlugin
       ignoreSelectionChange
+      ignoreHistoryMergeTagChange={false} 
       onChange={(editorState) => {
-        const json = JSON.stringify(editorState);
+        const json = JSON.stringify(editorState.toJSON());
         onChange(json);
       }}
     />

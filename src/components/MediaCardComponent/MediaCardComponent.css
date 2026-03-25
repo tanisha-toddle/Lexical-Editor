@@ -1,0 +1,158 @@
+.media-card-container {
+  padding: 8px;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  background-color: #fafafa;
+  width: 270px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 14px;
+  text-align: start;
+  margin: 6px 0;
+  cursor: pointer;
+}
+
+.media-card-container:hover:not(.error) {
+  border: 1px solid rgb(173, 173, 173);
+  background-color: rgb(230, 230, 230);
+  cursor: pointer;
+}
+
+.media-card-icon {
+  flex-shrink: 0;
+}
+
+.media-card-container .format {
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+  opacity: 0.7;
+  height: 20px;
+  width: 20px;
+  vertical-align: middle;
+}
+
+/* CONTENT */
+
+.media-card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.media-card-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #222;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.media-card-subtitle {
+  font-size: 12px;
+  color: #707070;
+}
+
+/* ACTION AREA */
+
+.media-card-actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ICON SIZE */
+
+/* ERROR BORDER */
+
+.error {
+  border-color: #e13232;
+}
+
+.error:hover {
+  border-color: #ca2626;
+  background-color: rgb(245, 244, 244);;
+}
+
+.retry-icon {
+  background: url(icons/retry.svg);
+}
+
+/* DELETE HOVER */
+
+.delete-icon {
+  background: url(icons/trash.svg);
+  cursor: pointer;
+}
+
+/* LOADER */
+
+.loader {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ddd;
+  border-top: 2px solid #838fa0;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* SPIN ANIMATION */
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Icons */ 
+
+i.pdf-icon {
+  background: url(icons/fileTypeIcons/pdf.svg);
+}
+
+i.word-icon {
+  background: url(icons/fileTypeIcons/docx.svg);
+}
+
+i.excel-icon {
+  background: url(icons/fileTypeIcons/excel.svg);
+}
+
+i.zip-icon {
+  background: url(icons/fileTypeIcons/zip.svg);
+}
+
+i.text-icon {
+  background: url(icons/fileTypeIcons/text.svg);
+}
+
+i.image-icon {
+  background: url(icons/fileTypeIcons/image.svg);
+}
+
+i.audio-icon {
+  background: url(icons/fileTypeIcons/audio.svg);
+}
+
+i.video-icon {
+  background: url(icons/fileTypeIcons/video.svg);
+}
+
+i.file-icon {
+  background: url(icons/fileTypeIcons/file.svg);
+}
+
+.media-card-retry-button, .media-card-delete-button {
+  all: unset;
+}
+
+.media-card-retry-button:disabled, .media-card-delete-button:disabled {
+  opacity: 0.5;
+}
+
+

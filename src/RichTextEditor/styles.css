@@ -247,6 +247,10 @@ mark {
   position: relative;
 }
 
+.editor-mention {
+  color: blue;
+}
+
 .editor-paragraph:last-child {
   margin-bottom: 0;
 }
@@ -425,7 +429,7 @@ pre::-webkit-scrollbar-thumb {
 }
 
 .toolbar .divider {
-  width: 1px;
+  min-width: 1px;
   background-color: #eee;
   margin: 0 4px;
 }
@@ -510,6 +514,9 @@ i.superscript {
   background-image: url(icons/superscript.svg);
 }
 
+i.upload {
+  background-image: url(icons/upload.svg);
+}
 /* Save Button Styles */
 
 .save-button {

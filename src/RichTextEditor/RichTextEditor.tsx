@@ -13,6 +13,14 @@ import ToolbarPlugin from "./plugins/ToolbarPlugin/ToolbarPlugin";
 import theme from "./theme";
 import CustomOnChangePlugin from "./plugins/CustomOnChangePlugin/CustomOnChangePlugin";
 import EditorModePlugin from "./plugins/EditorModePlugin/EditorModePlugin";
+import { MediaCardNode } from "../nodes/MediaCardNode/MediaCardNode";
+import MediaUploadPlugin from "./plugins/MediaUploadPlugin/MediaUploadPlugin";
+import { uploadToServer } from "../utils/UploadToServer";
+import { EditorContext } from "./context/EditorContext";
+import SlashPlugin from "./plugins/SlashPlugin/SlashPlugin";
+import { SLASH_MENU_ITEMS } from "../constants/slashMenuItems";
+import MentionPlugin from "./plugins/V_MentionPlugin/MentionPlugin";
+import { MentionNode } from "./plugins/V_MentionPlugin/MentionNode";
 
 function onError(error: Error) {
   console.log(error);
@@ -32,7 +40,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   name,
   placeholder = "Enter some rich text...",
 }) => {
-
   const [currentMode, setCurrentMode] = useState<EditorModes>("edit");
 
   const initialConfig = useMemo(
@@ -46,40 +53,50 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         HeadingNode,
         CodeHighlightNode,
         CodeNode,
+        MediaCardNode,
+        MentionNode
       ],
-      editable: currentMode === "edit"
+      editable: currentMode === "edit",
     }),
     [name, currentMode],
   );
 
   return (
-    <LexicalComposer initialConfig={initialConfig}>
-      <div className="editor-container">
-        <EditorModePlugin mode={currentMode} setMode={setCurrentMode} />
-        {
-          !(currentMode === "read") && <ToolbarPlugin isDisabled={currentMode === "view"} />
-        }
+    <EditorContext.Provider value={currentMode}>
+      <LexicalComposer initialConfig={initialConfig}>
+        <div className="editor-container">
+          <EditorModePlugin mode={currentMode} setMode={setCurrentMode} />
+          {!(currentMode === "read") && (
+            <ToolbarPlugin isDisabled={currentMode === "view"} />
+          )}
 
-        <div className="editor-inner">
-          <RichTextPlugin
-            contentEditable={
-              <ContentEditable
-                className="editor-input"
-                aria-placeholder={placeholder}
-                aria-readonly={currentMode !== "edit"}
-                placeholder={
-                  <div className="editor-placeholder">{placeholder}</div>
-                }
-              />
-            }
-            ErrorBoundary={LexicalErrorBoundary}
-          />
-          <HistoryPlugin />
-          <AutoFocusPlugin />
-          <CustomOnChangePlugin value={value} onChange={onChange} />
+          <div className="editor-inner">
+            <RichTextPlugin
+              contentEditable={
+                <ContentEditable
+                  className="editor-input"
+                  aria-placeholder={placeholder}
+                  aria-readonly={currentMode !== "edit"}
+                  placeholder={
+                    <div className="editor-placeholder">{placeholder}</div>
+                  }
+                />
+              }
+              ErrorBoundary={LexicalErrorBoundary}
+            />
+            <HistoryPlugin />
+            <AutoFocusPlugin />
+            <MediaUploadPlugin
+              uploadMediaHandler={uploadToServer}
+              deleteMediaHandler={async () => {}}
+            />
+            <CustomOnChangePlugin value={value} onChange={onChange} />
+            <SlashPlugin menuItems={SLASH_MENU_ITEMS}/>
+            <MentionPlugin />
+          </div>
         </div>
-      </div>
-    </LexicalComposer>
+      </LexicalComposer>
+    </EditorContext.Provider>
   );
 };
 

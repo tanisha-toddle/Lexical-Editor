@@ -37,6 +37,7 @@ export default {
     strikethrough: 'editor-text-strikethrough',
     underline: 'editor-text-underline',
     underlineStrikethrough: 'editor-text-underlineStrikethrough',
-    highlight: "editor-highlight"
+    highlight: "editor-highlight",
   },
+  mention: "editor-mention",
 };

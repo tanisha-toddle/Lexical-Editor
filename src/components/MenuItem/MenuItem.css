@@ -1,0 +1,42 @@
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.1s;
+  list-style: none;
+}
+
+.menu-item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background-color: #e8e8e8;
+  font-size: 12px;
+  font-weight: 700;
+  color: #333;
+  flex-shrink: 0;
+  font-family: monospace;
+}
+
+.menu-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.menu-item-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111;
+}
+
+.menu-item-description {
+  font-size: 11px;
+  color: #888;
+}
