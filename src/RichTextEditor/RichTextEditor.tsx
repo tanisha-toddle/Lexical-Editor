@@ -19,6 +19,8 @@ import { uploadToServer } from "../utils/UploadToServer";
 import { EditorContext } from "./context/EditorContext";
 import SlashPlugin from "./plugins/SlashPlugin/SlashPlugin";
 import { SLASH_MENU_ITEMS } from "../constants/slashMenuItems";
+import MentionPlugin from "./plugins/V_MentionPlugin/MentionPlugin";
+import { MentionNode } from "./plugins/V_MentionPlugin/MentionNode";
 
 function onError(error: Error) {
   console.log(error);
@@ -52,6 +54,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         CodeHighlightNode,
         CodeNode,
         MediaCardNode,
+        MentionNode
       ],
       editable: currentMode === "edit",
     }),
@@ -89,6 +92,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
             />
             <CustomOnChangePlugin value={value} onChange={onChange} />
             <SlashPlugin menuItems={SLASH_MENU_ITEMS}/>
+            <MentionPlugin />
           </div>
         </div>
       </LexicalComposer>

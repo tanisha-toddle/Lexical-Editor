@@ -22,3 +22,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+src/RichTextEditor/plugins/MediaUploadPlugin/MediaUploadPlugin copy.tsx

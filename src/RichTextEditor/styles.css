@@ -247,6 +247,10 @@ mark {
   position: relative;
 }
 
+.editor-mention {
+  color: blue;
+}
+
 .editor-paragraph:last-child {
   margin-bottom: 0;
 }
