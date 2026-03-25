@@ -77,13 +77,13 @@
 }
 
 .retry-icon {
-  background: url(icons/retry.svg);
+  background: url(/icons/retry.svg);
 }
 
 /* DELETE HOVER */
 
 .delete-icon {
-  background: url(icons/trash.svg);
+  background: url(/icons/trash.svg);
   cursor: pointer;
 }
 
@@ -112,39 +112,39 @@
 /* Icons */ 
 
 i.pdf-icon {
-  background: url(icons/fileTypeIcons/pdf.svg);
+  background: url(/icons/fileTypeIcons/pdf.svg);
 }
 
 i.word-icon {
-  background: url(icons/fileTypeIcons/docx.svg);
+  background: url(/icons/fileTypeIcons/docx.svg);
 }
 
 i.excel-icon {
-  background: url(icons/fileTypeIcons/excel.svg);
+  background: url(/icons/fileTypeIcons/excel.svg);
 }
 
 i.zip-icon {
-  background: url(icons/fileTypeIcons/zip.svg);
+  background: url(/icons/fileTypeIcons/zip.svg);
 }
 
 i.text-icon {
-  background: url(icons/fileTypeIcons/text.svg);
+  background: url(/icons/fileTypeIcons/text.svg);
 }
 
 i.image-icon {
-  background: url(icons/fileTypeIcons/image.svg);
+  background: url(/icons/fileTypeIcons/image.svg);
 }
 
 i.audio-icon {
-  background: url(icons/fileTypeIcons/audio.svg);
+  background: url(/icons/fileTypeIcons/audio.svg);
 }
 
 i.video-icon {
-  background: url(icons/fileTypeIcons/video.svg);
+  background: url(/icons/fileTypeIcons/video.svg);
 }
 
 i.file-icon {
-  background: url(icons/fileTypeIcons/file.svg);
+  background: url(/icons/fileTypeIcons/file.svg);
 }
 
 .media-card-retry-button, .media-card-delete-button {
