@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import RichTextEditor from "./RichTextEditor/RichTextEditor";
 
 export const STORAGE_KEY = "RichTextEditor";
